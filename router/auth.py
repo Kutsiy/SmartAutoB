@@ -18,5 +18,5 @@ async def signUp(signUp: SignUpDto):
 
 @authRouter.get("/logout")
 async def logout():
-    pass
+    return "hi"
 
