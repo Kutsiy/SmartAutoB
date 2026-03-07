@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
 
+
 class User(BaseModel):
     id: UUID
     name: str
@@ -10,3 +11,4 @@ class User(BaseModel):
 class UserPayload(BaseModel):
     email: EmailStr
     name: str
+    role: str

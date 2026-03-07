@@ -22,7 +22,8 @@ def create_access_token(user_id: UUID, user_payload: UserPayload):
         "exp": int(expire.timestamp()),
         "type": "access",
         "email": user_payload.email,
-        "name": user_payload.name
+        "name": user_payload.name,
+        "role": user_payload.role
     }
     return jwt.encode(payload, ACCESS_TOKEN_KEY, algorithm=ALGORITHM)
 
