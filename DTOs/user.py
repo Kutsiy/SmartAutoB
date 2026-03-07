@@ -8,6 +8,5 @@ class User(BaseModel):
     password: str
 
 class UserPayload(BaseModel):
-    id: UUID
     email: EmailStr
-    password: str
+    name: str
