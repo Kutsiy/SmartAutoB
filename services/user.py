@@ -3,7 +3,7 @@ from tools import SessionDep, create_rundom_string
 from DTOs import SignUpDto, LoginDto
 from sqlmodel import select
 from models import User
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 class Toggle(Enum):
     EXIST = 1
@@ -15,10 +15,10 @@ def user_exist(toggle: Toggle, user_payload: LoginDto | SignUpDto,  session: Ses
 
     if toggle == Toggle.EXIST:
         if user:
-            raise HTTPException(detail="User already exist")
+            raise HTTPException(detail="User already exist", status_code=status.HTTP_409_CONFLICT)
     else:
         if not user:
-            raise HTTPException(detail="User with this email not exist")
+            raise HTTPException(detail="User with this email not exist", status_code=status.HTTP_404_NOT_FOUND)
     
     return user
 
@@ -33,10 +33,15 @@ def create_user(user_payload: SignUpDto, hashed_password, session: SessionDep):
 
 
 def find_user_by_email(email: str, session: SessionDep):
-    return session.exec(select(User).where(User.email == email)).first()
+    user = session.exec(select(User).where(User.email == email)).first()
+    if not user:
+        raise HTTPException(detail="User with this email not exist", status_code=status.HTTP_404_NOT_FOUND)
+    return user
     
 def find_user_by_code_and_active(code:str, session: SessionDep):
     user = session.exec(select(User).where(User.activeSymbols == code)).first()
+    if not user:
+        raise HTTPException(detail="User with this code not exist", status_code=status.HTTP_404_NOT_FOUND)
     user.isActive = True
     session.add(user)
     session.commit()

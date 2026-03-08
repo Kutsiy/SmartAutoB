@@ -2,6 +2,7 @@ from fastapi_mail import NameEmail, ConnectionConfig, MessageSchema, FastMail, M
 from pydantic import BaseModel
 from config import MAIL_PASSWORD, MAIL_USERNAME, MAIL_FROM
 from starlette.responses import JSONResponse
+from fastapi import HTTPException, status
 
 class EmailSchema(BaseModel):
     email: list[NameEmail]
@@ -20,16 +21,20 @@ config = ConnectionConfig(
 
 
 async def send_email(email: EmailSchema, code: str):
-    html = f"""
-        <p>Yor code is {code}</p> 
-    """
+    try:
+        html = f"""
+            <p>Yor code is {code}</p> 
+        """
 
-    message = MessageSchema(
-        subject="Fastapi-Mail module",
-        recipients=email.dict().get("email"),
-        body=html,
-        subtype=MessageType.html)
+        message = MessageSchema(
+            subject="Fastapi-Mail module",
+            recipients=email.dict().get("email"),
+            body=html,
+            subtype=MessageType.html)
 
-    fm = FastMail(config)
-    await fm.send_message(message)
+        fm = FastMail(config)
+        await fm.send_message(message)
+    except Exception:
+        raise HTTPException(detail="Error in email service", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     return JSONResponse(status_code=200, content={"message": "email has been sent"})

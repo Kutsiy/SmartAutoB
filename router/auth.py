@@ -36,6 +36,7 @@ async def signUp(signUp: SignUpDto, session: SessionDep, response: Response)-> U
 
     tokens = create_and_safe_token(user, [role], session=session)
     response.set_cookie("access_token", tokens.access_token, ACCESS_TOKEN_EXPIRE_MINUTES * 60, httponly=True, secure=True, samesite="lax")    
+
     return UserPayload(email=user.email, name=user.name, role=[role.name])
 
 @authRouter.get("/logout")
