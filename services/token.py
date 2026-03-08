@@ -1,0 +1,21 @@
+from models import User, Role, RefreshToken
+from tools import SessionDep, Tokens, create_tokens, REFRESH_TOKEN_EXPIRE_DAYS
+from datetime import datetime, timezone, timedelta
+from DTOs import UserPayload
+from uuid import UUID
+from sqlmodel import select
+
+def create_and_safe_token(user: User, role: list[Role], session: SessionDep):
+    user_payload = UserPayload(email=user.email, name=user.name, role=[value.name for value in role])
+    tokens: Tokens = create_tokens(user.id, user_payload=user_payload)
+    expires_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    refresh_token = RefreshToken(user_id=user.id, jti=tokens.jti, expires_at=expires_at)
+    session.add(refresh_token)
+    session.commit()
+    return tokens
+
+def find_token_by_user_id_and_revoke(user_id: UUID, session: SessionDep):
+    refresh_token = session.exec(select(RefreshToken).where(RefreshToken.user_id == user_id)).first()
+    refresh_token.revoked = True
+    session.add(refresh_token)
+    session.commit()

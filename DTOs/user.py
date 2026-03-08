@@ -11,4 +11,4 @@ class User(BaseModel):
 class UserPayload(BaseModel):
     email: EmailStr
     name: str
-    role: str
+    role: list[str]

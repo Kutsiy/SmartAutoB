@@ -12,3 +12,5 @@ class User(SQLModel, table=True):
     password: str
     roles: List[Role] = Relationship(back_populates='users', link_model=UserRole)
     isBanned: bool = False
+    activeSymbols: str = Field(max_length=8)
+    isActive: bool = False

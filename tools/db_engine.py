@@ -20,10 +20,10 @@ def wait_for_db():
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
-    user_role = models.Role(name="USER")
-    admin_role = models.Role(name="ADMIN")
-    session = Session(engine)
-    session.add(user_role)
-    session.add(admin_role)
-    session.commit()
-    session.close()
+    # user_role = models.Role(name="USER")
+    # admin_role = models.Role(name="ADMIN")
+    # session = Session(engine)
+    # session.add(user_role)
+    # session.add(admin_role)
+    # session.commit()
+    # session.close()

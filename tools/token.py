@@ -47,3 +47,7 @@ def create_tokens(user_id: UUID, user_payload: UserPayload)-> Tokens:
         refresh_token=refresh_token,
         jti=jti
     )
+
+
+def decode_access_token(token: str):
+    return jwt.decode(token, algorithms=ALGORITHM, key=ACCESS_TOKEN_KEY)
