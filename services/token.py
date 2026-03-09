@@ -29,3 +29,14 @@ def get_access_token(request: Request):
         raise HTTPException(detail="Access token not found", status_code=status.HTTP_401_UNAUTHORIZED)
         
     return token
+
+
+def find_all_user_tokens_by_id(user_id: UUID,session: SessionDep):
+    tokens: list[RefreshToken] = session.exec(select(RefreshToken).where(RefreshToken.user_id == user_id)).all()
+    return tokens
+
+def find_all_user_tokens_by_id_and_delete(user_id: UUID, session: SessionDep):
+    tokens = find_all_user_tokens_by_id(user_id, session)
+    for token in tokens:
+        session.delete(token)
+    session.commit()

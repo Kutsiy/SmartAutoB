@@ -14,3 +14,7 @@ class User(SQLModel, table=True):
     isBanned: bool = False
     activeSymbols: str = Field(max_length=8)
     isActive: bool = False
+    tokens: list["RefreshToken"] = Relationship(
+    back_populates="user",
+    sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+)

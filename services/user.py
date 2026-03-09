@@ -4,7 +4,7 @@ from DTOs import SignUpDto, LoginDto
 from sqlmodel import select
 from models import User, Roles
 from fastapi import HTTPException, status, Depends
-from .token import get_access_token, find_token_by_user_id_and_revoke
+from .token import get_access_token, find_token_by_user_id_and_revoke, find_all_user_tokens_by_id_and_delete
 from uuid import UUID
 
 
@@ -73,9 +73,8 @@ def check_user_active(session: SessionDep, user: User = Depends(check_user)):
     return user
     
 def check_role(roles: list[Roles]):
-    roles_values = [role.value for role in roles]
     def check(user: User = Depends(check_user)):
-        if not any(r.name in roles_values for r in user.roles):
+        if not any(r.name in roles for r in user.roles):
             raise HTTPException(detail="You don`t have perrmision", status_code=status.HTTP_406_NOT_ACCEPTABLE)
     return check
 
@@ -87,6 +86,7 @@ def check_user_banned(session: SessionDep, user: User = Depends(check_user)):
 def change_isBanned_a_user(toggle: bool, user_id: UUID, session: SessionDep):
     user = find_user_by_id(user_id, session)
     user.isBanned = toggle
+    find_all_user_tokens_by_id_and_delete(session)
     session.add(user)
     session.commit()
     session.refresh(user)
@@ -101,7 +101,6 @@ def change_user_name(new_name: str, session: SessionDep, user: User = Depends(ch
 
 def delete_user_by_id(user_id: UUID, session: SessionDep):
     user = find_user_by_id(user_id, session)
-    change_isBanned_a_user(True, user_id, session)
     find_token_by_user_id_and_revoke(user_id, session)
     session.delete(user)
-    session.commit
+    session.commit()
