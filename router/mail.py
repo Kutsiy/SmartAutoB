@@ -5,6 +5,6 @@ from tools import SessionDep
 mailRouter = APIRouter(prefix="/mail")
 
 
-@mailRouter.get("/check")
+@mailRouter.get("/active")
 async def check(code:str, session: SessionDep):
     find_user_by_code_and_active(code, session)

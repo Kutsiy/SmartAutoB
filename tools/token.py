@@ -1,10 +1,11 @@
 import jwt
-from jwt.exceptions import InvalidTokenError
+from jwt import PyJWTError
 from uuid import UUID, uuid4
 from datetime import datetime, timedelta, timezone
 from pydantic import BaseModel
 from config import ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY
 from DTOs.user import UserPayload
+from fastapi import HTTPException, status
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -50,4 +51,8 @@ def create_tokens(user_id: UUID, user_payload: UserPayload)-> Tokens:
 
 
 def decode_access_token(token: str):
-    return jwt.decode(token, algorithms=ALGORITHM, key=ACCESS_TOKEN_KEY)
+    try:
+        payload = jwt.decode(token, algorithms=ALGORITHM, key=ACCESS_TOKEN_KEY) 
+    except PyJWTError as e:
+        raise HTTPException(detail="Error decoded token", status_code=status.HTTP_401_UNAUTHORIZED)
+    return payload

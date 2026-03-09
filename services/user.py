@@ -1,9 +1,11 @@
 from enum import Enum
-from tools import SessionDep, create_rundom_string
+from tools import SessionDep, create_rundom_string, decode_access_token
 from DTOs import SignUpDto, LoginDto
 from sqlmodel import select
 from models import User
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
+from .token import get_access_token
+
 
 class Toggle(Enum):
     EXIST = 1
@@ -45,3 +47,11 @@ def find_user_by_code_and_active(code:str, session: SessionDep):
     user.isActive = True
     session.add(user)
     session.commit()
+
+
+def check_user_active(session: SessionDep, token = Depends(get_access_token)):
+    payload = decode_access_token(token)
+    user = find_user_by_email(payload["email"], session)
+    if not user.isActive:
+        raise HTTPException(detail="User account not activated", status_code=status.HTTP_406_NOT_ACCEPTABLE)
+    

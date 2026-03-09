@@ -4,7 +4,7 @@ from datetime import datetime, timezone, timedelta
 from DTOs import UserPayload
 from uuid import UUID
 from sqlmodel import select
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Request
 
 def create_and_safe_token(user: User, role: list[Role], session: SessionDep):
     user_payload = UserPayload(email=user.email, name=user.name, role=[value.name for value in role])
@@ -22,3 +22,10 @@ def find_token_by_user_id_and_revoke(user_id: UUID, session: SessionDep):
     refresh_token.revoked = True
     session.add(refresh_token)
     session.commit()
+
+def get_access_token(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(detail="Access token not found", status_code=status.HTTP_401_UNAUTHORIZED)
+        
+    return token

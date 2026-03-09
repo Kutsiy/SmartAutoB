@@ -5,9 +5,9 @@ from DTOs import LoginDto, SignUpDto, UserPayload
 from tools import get_password_hash, ACCESS_TOKEN_EXPIRE_MINUTES, verify_password
 from uuid import UUID, uuid4
 from tools import SessionDep, decode_access_token
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from models import User
-from services import user_exist, Toggle, create_user, find_and_add_role, create_and_safe_token, find_token_by_user_id_and_revoke, find_user_by_email, send_email, EmailSchema
+from services import user_exist, Toggle, create_user, find_and_add_role, create_and_safe_token, find_token_by_user_id_and_revoke, find_user_by_email, send_email, EmailSchema, check_user_active
 
 authRouter = APIRouter(prefix="/auth")
 
@@ -20,6 +20,8 @@ async def login(login: LoginDto, session: SessionDep, response: Response):
 
     tokens = create_and_safe_token(user=user, role=user.roles, session=session)
     response.set_cookie("access_token", tokens.access_token, ACCESS_TOKEN_EXPIRE_MINUTES * 60, httponly=True, secure=True, samesite="lax")
+    if not user.isActive:
+        await send_email(email=EmailSchema(email=[user.email]), code=user.activeSymbols)
     return UserPayload(email=user.email, name=user.name, role=[value.name for value in user.roles])
 
 @authRouter.post("/signup")
@@ -46,3 +48,8 @@ async def logout(response: Response, request: Request, session:SessionDep):
     decoded_token = decode_access_token(token)
     user = find_user_by_email(decoded_token["email"], session)
     find_token_by_user_id_and_revoke(user.id, session)
+
+
+@authRouter.get("/check")
+async def check(check = Depends(check_user_active)):
+    return "it`s ok"
