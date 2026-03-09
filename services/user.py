@@ -2,7 +2,7 @@ from enum import Enum
 from tools import SessionDep, create_rundom_string, decode_access_token
 from DTOs import SignUpDto, LoginDto
 from sqlmodel import select
-from models import User
+from models import User, Roles
 from fastapi import HTTPException, status, Depends
 from .token import get_access_token
 
@@ -54,4 +54,13 @@ def check_user_active(session: SessionDep, token = Depends(get_access_token)):
     user = find_user_by_email(payload["email"], session)
     if not user.isActive:
         raise HTTPException(detail="User account not activated", status_code=status.HTTP_406_NOT_ACCEPTABLE)
+    return user
     
+def check_role(roles: list[Roles]):
+    def check(session: SessionDep, token = Depends(get_access_token)):
+        payload = decode_access_token(token)
+
+        user = find_user_by_email(payload["email"], session)
+        if not any(role == r.name for r in user.roles for role in roles):
+            raise HTTPException(detail="You don`t have perrmision", status_code=status.HTTP_406_NOT_ACCEPTABLE)
+    return check

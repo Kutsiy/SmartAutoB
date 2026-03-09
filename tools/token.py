@@ -52,7 +52,8 @@ def create_tokens(user_id: UUID, user_payload: UserPayload)-> Tokens:
 
 def decode_access_token(token: str):
     try:
+        print(token)
         payload = jwt.decode(token, algorithms=ALGORITHM, key=ACCESS_TOKEN_KEY) 
-    except PyJWTError as e:
+    except PyJWTError:
         raise HTTPException(detail="Error decoded token", status_code=status.HTTP_401_UNAUTHORIZED)
     return payload
