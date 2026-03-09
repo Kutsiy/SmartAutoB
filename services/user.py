@@ -4,7 +4,8 @@ from DTOs import SignUpDto, LoginDto
 from sqlmodel import select
 from models import User, Roles
 from fastapi import HTTPException, status, Depends
-from .token import get_access_token
+from .token import get_access_token, find_token_by_user_id_and_revoke
+from uuid import UUID
 
 
 class Toggle(Enum):
@@ -33,6 +34,14 @@ def create_user(user_payload: SignUpDto, hashed_password, session: SessionDep):
     session.refresh(user)
     return user
 
+def find_all_users(session: SessionDep):
+    return session.exec(select(User)).all()
+
+def find_user_by_id(user_id: UUID, session: SessionDep):
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(detail="User with this id not exist", status_code=status.HTTP_404_NOT_FOUND)
+    return user
 
 def find_user_by_email(email: str, session: SessionDep):
     user = session.exec(select(User).where(User.email == email)).first()
@@ -48,9 +57,13 @@ def find_user_by_code_and_active(code:str, session: SessionDep):
     session.add(user)
     session.commit()
 
+
 def check_user(session: SessionDep, token = Depends(get_access_token)):
     payload = decode_access_token(token)
     user = find_user_by_email(payload["email"], session)
+    return user
+
+def check_user_auth(user = Depends(check_user)):
     return user
 
 
@@ -60,8 +73,9 @@ def check_user_active(session: SessionDep, user: User = Depends(check_user)):
     return user
     
 def check_role(roles: list[Roles]):
-    def check(session: SessionDep, user: User = Depends(check_user)):
-        if not any(role == r.name for r in user.roles for role in roles):
+    roles_values = [role.value for role in roles]
+    def check(user: User = Depends(check_user)):
+        if not any(r.name in roles_values for r in user.roles):
             raise HTTPException(detail="You don`t have perrmision", status_code=status.HTTP_406_NOT_ACCEPTABLE)
     return check
 
@@ -69,3 +83,25 @@ def check_user_banned(session: SessionDep, user: User = Depends(check_user)):
     if not user.isBanned:
         raise HTTPException(detail="You`re banned", status_code=status.HTTP_406_NOT_ACCEPTABLE)
     return user
+
+def change_isBanned_a_user(toggle: bool, user_id: UUID, session: SessionDep):
+    user = find_user_by_id(user_id, session)
+    user.isBanned = toggle
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
+
+def change_user_name(new_name: str, session: SessionDep, user: User = Depends(check_user)):
+    user.name = new_name
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
+
+def delete_user_by_id(user_id: UUID, session: SessionDep):
+    user = find_user_by_id(user_id, session)
+    change_isBanned_a_user(True, user_id, session)
+    find_token_by_user_id_and_revoke(user_id, session)
+    session.delete(user)
+    session.commit
