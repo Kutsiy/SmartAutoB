@@ -48,19 +48,24 @@ def find_user_by_code_and_active(code:str, session: SessionDep):
     session.add(user)
     session.commit()
 
-
-def check_user_active(session: SessionDep, token = Depends(get_access_token)):
+def check_user(session: SessionDep, token = Depends(get_access_token)):
     payload = decode_access_token(token)
     user = find_user_by_email(payload["email"], session)
+    return user
+
+
+def check_user_active(session: SessionDep, user: User = Depends(check_user)):
     if not user.isActive:
         raise HTTPException(detail="User account not activated", status_code=status.HTTP_406_NOT_ACCEPTABLE)
     return user
     
 def check_role(roles: list[Roles]):
-    def check(session: SessionDep, token = Depends(get_access_token)):
-        payload = decode_access_token(token)
-
-        user = find_user_by_email(payload["email"], session)
+    def check(session: SessionDep, user: User = Depends(check_user)):
         if not any(role == r.name for r in user.roles for role in roles):
             raise HTTPException(detail="You don`t have perrmision", status_code=status.HTTP_406_NOT_ACCEPTABLE)
     return check
+
+def check_user_banned(session: SessionDep, user: User = Depends(check_user)):
+    if not user.isBanned:
+        raise HTTPException(detail="You`re banned", status_code=status.HTTP_406_NOT_ACCEPTABLE)
+    return user

@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 from tools import SessionDep, decode_access_token
 from fastapi import HTTPException, Depends
 from models import User, Roles
-from services import user_exist, Toggle, create_user, find_and_add_role, create_and_safe_token, find_token_by_user_id_and_revoke, find_user_by_email, send_email, EmailSchema, check_role
+from services import user_exist, Toggle, create_user, find_and_add_role, create_and_safe_token, find_token_by_user_id_and_revoke, find_user_by_email, send_email, EmailSchema
 
 authRouter = APIRouter(prefix="/auth")
 
@@ -50,6 +50,6 @@ async def logout(response: Response, request: Request, session:SessionDep):
     find_token_by_user_id_and_revoke(user.id, session)
 
 
-@authRouter.get("/check")
-async def check(check = Depends(check_role([Roles.USER]))):
-    return "it`s ok"
+# @authRouter.get("/check")
+# async def check(check = Depends(check_role([Roles.USER]))):
+#     return "it`s ok"
