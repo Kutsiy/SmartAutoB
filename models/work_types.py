@@ -7,9 +7,10 @@ from .services import Services
 class WorkTypes(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
 
-    service_id: UUID = Field(foreign_key="services.id")
-    service: Optional[Services] = Relationship(back_populates="work_types", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    service_id: UUID = Field(foreign_key="services.id", ondelete="CASCADE")
+    service: Optional["Services"] = Relationship(back_populates="work_types")
 
     name: str
+    link_name: str
     text: str
     price: Decimal
