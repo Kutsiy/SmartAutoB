@@ -2,13 +2,13 @@ from sqlmodel import SQLModel, Field, Relationship
 from uuid import UUID, uuid4
 from decimal import Decimal
 from typing import Optional
-from .services import Services
+from .service import Service
 
-class WorkTypes(SQLModel, table=True):
+class WorkType(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
 
-    service_id: UUID = Field(foreign_key="services.id", ondelete="CASCADE")
-    service: Optional["Services"] = Relationship(back_populates="work_types")
+    service_id: UUID = Field(foreign_key="service.id", ondelete="CASCADE")
+    service: Optional["Service"] = Relationship(back_populates="work_types")
 
     name: str
     link_name: str
