@@ -17,7 +17,6 @@ def create_and_safe_token(user: User, role: list[Role], session: SessionDep):
 
 def refresh_tokens(user: User, role: list[Role], session: SessionDep):
     old_refresh_token = session.exec(select(RefreshToken).where(RefreshToken.user_id == user.id, RefreshToken.revoked == False)).first()
-    print(old_refresh_token)
     if not old_refresh_token or old_refresh_token.revoked:
         raise HTTPException(detail="Invalid refresh token", status_code=status.HTTP_406_NOT_ACCEPTABLE)
     old_refresh_token.revoked = True
