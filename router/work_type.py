@@ -3,16 +3,16 @@ from services import check_role
 from models import Roles
 from uuid import UUID
 
-catalog_router = APIRouter(prefix="/catalog")
+work_type_router = APIRouter(prefix="/work/type")
 
-@catalog_router.get("/all")
+@work_type_router.get("/all")
 def get_all():
     pass
 
-@catalog_router.post("/create")
+@work_type_router.post("/create")
 def get_all(type_payload, check = Depends(check_role([Roles.ADMIN]))):
     pass
 
-@catalog_router.delete("/create")
+@work_type_router.delete("/create")
 def get_all(id: UUID, check = Depends(check_role([Roles.ADMIN]))):
     pass
