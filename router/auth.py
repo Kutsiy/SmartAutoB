@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 from tools import SessionDep, decode_access_token
 from fastapi import HTTPException, Depends
 from models import User, Roles
-from services import user_exist, Toggle, create_user, find_and_add_role, create_and_safe_token, find_token_by_user_id_and_revoke, find_user_by_email, send_email, EmailSchema
+from services import user_exist, Toggle, create_user, find_and_add_role, create_and_safe_token, find_token_by_user_id_and_revoke, find_user_by_email, send_email, EmailSchema, check_user_auth, refresh_tokens
 
 auth_router = APIRouter(prefix="/auth")
 
@@ -42,13 +42,17 @@ async def signUp(signUp: SignUpDto, session: SessionDep, response: Response)-> U
     return UserPayload(email=user.email, name=user.name, role=[role.name])
 
 @auth_router.get("/logout")
-async def logout(response: Response, request: Request, session:SessionDep):
+def logout(response: Response, request: Request, session:SessionDep):
     response.delete_cookie("access_token")
     token = request.headers.get("Authorization").split(" ")[1]
     decoded_token = decode_access_token(token)
     user = find_user_by_email(decoded_token["email"], session)
     find_token_by_user_id_and_revoke(user.id, session)
 
+@auth_router.get("/refresh")
+def refresh(response: Response, session: SessionDep, user: User = Depends(check_user_auth)):
+    tokens = refresh_tokens(user, user.roles, session)
+    response.set_cookie("access_token", tokens.access_token, ACCESS_TOKEN_EXPIRE_MINUTES * 60, httponly=True, secure=True, samesite="lax")
 
 # @auth_router.get("/check")
 # async def check(check = Depends(check_role([Roles.USER]))):
