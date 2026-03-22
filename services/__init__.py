@@ -22,7 +22,7 @@ from .service import (
 
 from .work_type import (
     find_all_work_types, find_work_type_by_id,
-    create_work_type, delete_work_type, update_work_type
+    add_work_type_to_service, delete_work_type, update_work_type
 )
 
 __all__ = [
@@ -49,5 +49,5 @@ __all__ = [
 
     # work_type
     "find_all_work_types", "find_work_type_by_id",
-    "create_work_type", "delete_work_type", "update_work_type",
+    "add_work_type_to_service", "delete_work_type", "update_work_type",
 ]

@@ -14,3 +14,4 @@ class WorkType(SQLModel, table=True):
     link_name: str
     text: str
     price: Decimal
+

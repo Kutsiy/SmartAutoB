@@ -3,9 +3,10 @@ from tools import SessionDep
 from sqlmodel import select
 from uuid import UUID
 from DTOs import WorkTypeDto
+from . import find_service_by_id
 
-def find_all_work_types(session: SessionDep):
-    return session.exec(select(WorkType)).all()
+def find_all_work_types(id: UUID, session: SessionDep):
+    return session.exec(select(WorkType).where(WorkType.service_id == id)).all()
 
 def find_work_type_by_id(id: UUID, session: SessionDep):
     return session.exec(select(WorkType).where(WorkType.id == id)).first()
@@ -21,9 +22,10 @@ def update_work_type(id: UUID, work_type: WorkTypeDto, session: SessionDep):
     return old_work_type
 
 
-def create_work_type(work_type: WorkTypeDto, session: SessionDep):
+def add_work_type_to_service(id: UUID, work_type: WorkTypeDto, session: SessionDep):
+    service = find_service_by_id(id, session)
     link_name = work_type.name.lower()
-    work_type_payload = WorkType(name=work_type.name, link_name=link_name, text=work_type.text, price=work_type.price)
+    work_type_payload = WorkType(name=work_type.name, link_name=link_name, text=work_type.text, price=work_type.price, service=service)
     session.add(work_type_payload)
     session.commit()
     session.refresh(work_type_payload)

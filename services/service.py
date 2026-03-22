@@ -1,11 +1,15 @@
 from tools import SessionDep
-from models import Service
+from models import Service, WorkType
 from sqlmodel import select
 from uuid import UUID
 from DTOs import ServiceDto
+from sqlalchemy.orm import selectinload
+
 
 def find_all_services(session: SessionDep):
-    services = session.exec(select(Service)).all()
+    services = session.exec(select(Service).options(selectinload(Service.work_types))).all()
+    for s in services:
+        print(s.work_types)
     return services
 
 def find_service_by_id(id: UUID, session: SessionDep):
