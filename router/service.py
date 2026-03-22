@@ -16,8 +16,8 @@ def get_service_by_id(id: UUID, session: SessionDep):
     return find_service_by_id(id, session)
 
 @service_router.post("/create")
-def create(service: ServiceDto, session: SessionDep):
-    return create_service(service, session)
+def create(id: UUID, service: ServiceDto, session: SessionDep):
+    return create_service(id, service, session)
 
 @service_router.patch("/update")
 def update(id: UUID, service: ServiceDto, session: SessionDep):

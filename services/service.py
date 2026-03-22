@@ -4,6 +4,7 @@ from sqlmodel import select
 from uuid import UUID
 from DTOs import ServiceDto
 from sqlalchemy.orm import selectinload
+from .category import find_category_by_id
 
 
 def find_all_services(session: SessionDep):
@@ -16,9 +17,10 @@ def find_service_by_id(id: UUID, session: SessionDep):
     service = session.exec(select(Service).where(Service.id == id)).first()
     return service
 
-def create_service(service: ServiceDto, session: SessionDep):
-    link_name = service.name.lower()
-    service_payload = Service(name=service.name, link_name=link_name, category=service.category, text=service.text)
+def create_service(id: UUID, service: ServiceDto, session: SessionDep):
+    category = find_category_by_id(id, session)
+    link_name = service.name.lower().strip().replace(" ", "/")
+    service_payload = Service(name=service.name, link_name=link_name, category=category, text=service.text,)
     session.add(service_payload)
     session.commit()
     session.refresh(service_payload)

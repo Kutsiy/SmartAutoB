@@ -25,6 +25,11 @@ from .work_type import (
     add_work_type_to_service, delete_work_type, update_work_type
 )
 
+from .category import (
+    find_all_categories, find_category_by_id, 
+    create_category, delete_category, update_category_by_id   
+)
+
 __all__ = [
     # user
     "user_exist", "Toggle", "create_user", "find_user_by_email",
@@ -50,4 +55,8 @@ __all__ = [
     # work_type
     "find_all_work_types", "find_work_type_by_id",
     "add_work_type_to_service", "delete_work_type", "update_work_type",
+
+    #category
+    "find_all_categories", "find_category_by_id", 
+    "create_category", "delete_category", "update_category_by_id"   
 ]
