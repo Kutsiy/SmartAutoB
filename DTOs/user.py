@@ -12,3 +12,7 @@ class UserPayload(BaseModel):
     email: EmailStr
     name: str
     role: list[str]
+    isActivate: bool = False
+
+class UserUpdateNamePayload(BaseModel):
+    name: str

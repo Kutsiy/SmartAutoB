@@ -38,6 +38,13 @@ def get_access_token(request: Request):
         
     return token
 
+def get_refresh_token(request: Request):
+    token = request.cookies.get("refresh_token")
+    if not token:
+        raise HTTPException(detail="Refresh token not found", status_code=status.HTTP_401_UNAUTHORIZED)
+        
+    return token
+
 
 def find_all_user_tokens_by_id(user_id: UUID,session: SessionDep):
     tokens: list[RefreshToken] = session.exec(select(RefreshToken).where(RefreshToken.user_id == user_id)).all()

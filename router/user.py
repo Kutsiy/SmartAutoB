@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
-from services import check_role, delete_user_by_id, find_all_users, find_user_by_id
-from models import Roles
+from services import check_role, delete_user_by_id, find_all_users, find_user_by_id, check_user_auth
+from models import Roles, User
 from uuid import UUID
 from tools import SessionDep
+from DTOs import UserPayload
 
 user_router = APIRouter(prefix="/user", dependencies=[Depends(check_role([Roles.USER]))])
 
@@ -13,6 +14,14 @@ def get_all_users(session: SessionDep):
 @user_router.get("")
 def get_user(id: UUID, session: SessionDep):
     return find_user_by_id(id, session)
+
+@user_router.get("/my")
+def get_user(session: SessionDep, user: User = Depends(check_user_auth)):
+    return UserPayload(name=user.name, email=user.email, role=[role.name for role in user.roles], isActivate=user.isActive)
+
+@user_router.patch("/update")
+def update_user(payload):
+    pass
 
 @user_router.delete("/delete")
 def delete_user(id: UUID, session: SessionDep):
