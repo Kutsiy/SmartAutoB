@@ -17,7 +17,7 @@ class Tokens(BaseModel):
     jti: str
 
 def create_access_token(user_id: UUID, user_payload: UserPayload):
-    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES / 10)
     payload = {
         "sub": str(user_id),
         "exp": int(expire.timestamp()),
@@ -52,8 +52,15 @@ def create_tokens(user_id: UUID, user_payload: UserPayload)-> Tokens:
 
 def decode_access_token(token: str):
     try:
-        print(token)
         payload = jwt.decode(token, algorithms=ALGORITHM, key=ACCESS_TOKEN_KEY) 
+    except PyJWTError:
+        raise HTTPException(detail="Error decoded token", status_code=status.HTTP_401_UNAUTHORIZED)
+    return payload
+
+
+def decode_refresh_token(token: str):
+    try:
+        payload = jwt.decode(token, algorithms=ALGORITHM, key=REFRESH_TOKEN_KEY) 
     except PyJWTError:
         raise HTTPException(detail="Error decoded token", status_code=status.HTTP_401_UNAUTHORIZED)
     return payload

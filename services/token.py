@@ -15,6 +15,14 @@ def create_and_safe_token(user: User, role: list[Role], session: SessionDep):
     session.commit()
     return tokens
 
+def refresh_tokens(user: User, role: list[Role], session: SessionDep):
+    old_refresh_token = session.exec(select(RefreshToken).where(RefreshToken.user_id == user.id, RefreshToken.revoked == False)).first()
+    print(old_refresh_token)
+    if not old_refresh_token or old_refresh_token.revoked:
+        raise HTTPException(detail="Invalid refresh token", status_code=status.HTTP_406_NOT_ACCEPTABLE)
+    old_refresh_token.revoked = True
+    return create_and_safe_token(user, role, session)
+
 def find_token_by_user_id_and_revoke(user_id: UUID, session: SessionDep):
     refresh_token = session.exec(select(RefreshToken).where(RefreshToken.user_id == user_id)).first()
     if not refresh_token:
@@ -27,6 +35,13 @@ def get_access_token(request: Request):
     token = request.cookies.get("access_token")
     if not token:
         raise HTTPException(detail="Access token not found", status_code=status.HTTP_401_UNAUTHORIZED)
+        
+    return token
+
+def get_refresh_token(request: Request):
+    token = request.cookies.get("refresh_token")
+    if not token:
+        raise HTTPException(detail="Refresh token not found", status_code=status.HTTP_401_UNAUTHORIZED)
         
     return token
 

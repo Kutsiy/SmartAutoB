@@ -9,6 +9,11 @@ class User(BaseModel):
     password: str
 
 class UserPayload(BaseModel):
+    id: UUID | None = None
     email: EmailStr
     name: str
     role: list[str]
+    isActivate: bool = False
+
+class UserUpdateNamePayload(BaseModel):
+    name: str
