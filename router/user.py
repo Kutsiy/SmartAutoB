@@ -16,8 +16,9 @@ def get_user(id: UUID, session: SessionDep):
     return find_user_by_id(id, session)
 
 @user_router.get("/my")
-def get_user(session: SessionDep, user: User = Depends(check_user_auth)):
-    return UserPayload(name=user.name, email=user.email, role=[role.name for role in user.roles], isActivate=user.isActive)
+def get_user( user: User = Depends(check_user_auth)):
+
+    return UserPayload(id=user.id, name=user.name, email=user.email, role=[role.name for role in user.roles], isActivate=user.isActive)
 
 @user_router.patch("/update")
 def update_user(payload):
@@ -26,3 +27,7 @@ def update_user(payload):
 @user_router.delete("/delete")
 def delete_user(id: UUID, session: SessionDep):
     delete_user_by_id(id, session)
+
+@user_router.get('/isadmin')
+def user_is_admin(check = Depends(check_role([Roles.ADMIN]))):
+    return True

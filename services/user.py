@@ -1,6 +1,6 @@
 from enum import Enum
 from tools import SessionDep, create_rundom_string, decode_access_token, decode_refresh_token
-from DTOs import SignUpDto, LoginDto
+from DTOs import SignUpDto, LoginDto, UserPayload
 from sqlmodel import select
 from models import User, Roles
 from fastapi import HTTPException, status, Depends
@@ -35,7 +35,8 @@ def create_user(user_payload: SignUpDto, hashed_password, session: SessionDep):
     return user
 
 def find_all_users(session: SessionDep):
-    return session.exec(select(User)).all()
+    users = session.exec(select(User)).all()
+    return [UserPayload(id=user.id, name=user.name, email=user.email, role=[role.name for role in user.roles], isActivate=user.isActive) for user in users]
 
 def find_user_by_id(user_id: UUID, session: SessionDep):
     user = session.get(User, user_id)
