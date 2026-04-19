@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from services import check_role, delete_user_by_id, find_all_users, find_user_by_id, check_user_auth
+from services import check_role, delete_user_by_id, find_all_users, find_user_by_id_r_payload, check_user_auth
 from models import Roles, User
 from uuid import UUID
 from tools import SessionDep
@@ -13,7 +13,7 @@ def get_all_users(session: SessionDep):
 
 @user_router.get("")
 def get_user(id: UUID, session: SessionDep):
-    return find_user_by_id(id, session)
+    return find_user_by_id_r_payload(id, session)
 
 @user_router.get("/my")
 def get_user( user: User = Depends(check_user_auth)):

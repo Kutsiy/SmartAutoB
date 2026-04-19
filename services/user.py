@@ -44,11 +44,18 @@ def find_user_by_id(user_id: UUID, session: SessionDep):
         raise HTTPException(detail="User with this id not exist", status_code=status.HTTP_404_NOT_FOUND)
     return user
 
+def find_user_by_id_r_payload(user_id: UUID, session: SessionDep):
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(detail="User with this id not exist", status_code=status.HTTP_404_NOT_FOUND)
+    return UserPayload(id=user.id, name=user.name, email=user.email, role=[role.name for role in user.roles], isActivate=user.isActive, isBanned=user.isBanned)
+
 def find_user_by_email(email: str, session: SessionDep):
     user = session.exec(select(User).where(User.email == email)).first()
     if not user:
         raise HTTPException(detail="User with this email not exist", status_code=status.HTTP_404_NOT_FOUND)
     return user
+
     
 def find_user_by_code_and_active(code:str, session: SessionDep):
     print(code)
