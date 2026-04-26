@@ -1,4 +1,4 @@
-from sqlmodel import create_engine, SQLModel, Session
+from sqlmodel import create_engine, SQLModel, Session, select
 from config import DATABASE_URL
 import time
 from sqlalchemy.exc import OperationalError
@@ -20,10 +20,16 @@ def wait_for_db():
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
-    # user_role = models.Role(name="USER")
-    # admin_role = models.Role(name="ADMIN")
-    # session = Session(engine)
-    # session.add(user_role)
-    # session.add(admin_role)
-    # session.commit()
-    # session.close()
+    # with Session(engine) as session:
+    #     existing_roles = session.exec(
+    #         select(models.Role)
+    #     ).all()
+    #     existing_names = {role.name for role in existing_roles}
+    #     roles_to_create = []
+    #     if "USER" not in existing_names:
+    #         roles_to_create.append(models.Role(name="USER"))
+    #     if "ADMIN" not in existing_names:
+    #         roles_to_create.append(models.Role(name="ADMIN"))
+    #     if roles_to_create:
+    #         session.add_all(roles_to_create)
+    #         session.commit()

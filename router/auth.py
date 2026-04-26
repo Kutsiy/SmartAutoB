@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 from tools import SessionDep, decode_access_token
 from fastapi import HTTPException, Depends
 from models import User, Roles
-from services import user_exist, Toggle, create_user, find_and_add_role, create_and_safe_token, find_token_by_user_id_and_revoke, find_user_by_email, send_email, EmailSchema, check_user_auth, refresh_tokens, check_user_by_refresh_token
+from services import user_exist, Toggle, create_user, find_and_add_role, create_and_safe_token, find_token_by_user_id_and_revoke, find_user_by_email, send_email, EmailSchema, check_user_auth, refresh_tokens, check_user_by_refresh_token, get_access_token
 
 auth_router = APIRouter(prefix="/auth")
 
@@ -32,12 +32,12 @@ async def login(login: LoginDto, session: SessionDep, response: Response):
     return UserPayload(email=user.email, name=user.name, role=[value.name for value in user.roles], isActivate=user.isActive)
 
 @auth_router.post("/signup")
-async def signUp(signUp: SignUpDto, session: SessionDep, response: Response)-> UserPayload:
-    user_exist(toggle=Toggle.EXIST, user_payload=signUp, session=session)
+async def signUp(sign_up: SignUpDto, session: SessionDep, response: Response)-> UserPayload:
+    user_exist(toggle=Toggle.EXIST, user_payload=sign_up, session=session)
 
-    hashed_password = get_password_hash(signUp.password)
+    hashed_password = get_password_hash(sign_up.password)
 
-    user: User = create_user(signUp, hashed_password=hashed_password, session=session)
+    user: User = create_user(sign_up, hashed_password=hashed_password, session=session)
 
     await send_email(email=EmailSchema(email=[user.email]), code=user.activeSymbols)
     
@@ -51,9 +51,9 @@ async def signUp(signUp: SignUpDto, session: SessionDep, response: Response)-> U
 
 @auth_router.get("/logout")
 def logout(response: Response, request: Request, session:SessionDep):
+    token = get_access_token(request=request)
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")
-    token = request.headers.get("Authorization").split(" ")[1]
     decoded_token = decode_access_token(token)
     user = find_user_by_email(decoded_token["email"], session)
     find_token_by_user_id_and_revoke(user.id, session)

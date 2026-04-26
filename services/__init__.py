@@ -3,7 +3,7 @@ from .user import (
     user_exist, Toggle, create_user, find_user_by_email,
     find_user_by_code_and_active, check_user_active, check_role,
     check_user_banned, delete_user_by_id, find_user_by_id,
-    find_all_users, check_user_auth, check_user_by_refresh_token, find_user_by_id_r_payload
+    find_all_users, check_user_auth, check_user_by_refresh_token, find_user_by_id_r_payload, update_user_name
 )
 
 from .role import find_and_add_role
@@ -36,7 +36,7 @@ __all__ = [
     "user_exist", "Toggle", "create_user", "find_user_by_email",
     "find_user_by_code_and_active", "check_user_active", "check_role",
     "check_user_banned", "delete_user_by_id", "find_user_by_id",
-    "find_all_users", "check_user_auth", "check_user_by_refresh_token", "find_user_by_id_r_payload"
+    "find_all_users", "check_user_auth", "check_user_by_refresh_token", "find_user_by_id_r_payload", "update_user_name"
 
     # role
     "find_and_add_role",

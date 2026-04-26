@@ -34,6 +34,17 @@ def create_user(user_payload: SignUpDto, hashed_password, session: SessionDep):
     session.refresh(user)
     return user
 
+def update_user_name(nameUpdate, name, session: SessionDep):
+    try:
+        user = session.exec(select(User).where(User.name == name)).first()
+        user.name = nameUpdate;
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+    except:
+        pass
+
+
 def find_all_users(session: SessionDep):
     users = session.exec(select(User)).all()
     return [UserPayload(id=user.id, name=user.name, email=user.email, role=[role.name for role in user.roles], isActivate=user.isActive) for user in users]
@@ -62,7 +73,7 @@ def find_user_by_code_and_active(code:str, session: SessionDep):
     user = session.exec(select(User).where(User.activeSymbols == code)).first()
     if not user:
         raise HTTPException(detail="User with this code not exist", status_code=status.HTTP_404_NOT_FOUND)
-    if not user.isActive:
+    if user.isActive:
         raise HTTPException(detail="Account already active", status_code=status.HTTP_409_CONFLICT)
     user.isActive = True
     session.add(user)

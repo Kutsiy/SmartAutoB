@@ -3,6 +3,7 @@ from models import Category
 from tools import SessionDep
 from uuid import UUID
 from DTOs import CategoryDto
+from fastapi import HTTPException
 
 def find_all_categories(session: SessionDep):
     return session.exec(select(Category)).all()
@@ -21,6 +22,14 @@ def update_category_by_id(id: UUID, category: CategoryDto, session: SessionDep):
     return old_category
 
 def create_category(category: CategoryDto, session: SessionDep):
+    existing = session.exec(
+        select(Category).where(Category.name == category.name)
+    ).first()
+    if existing:
+        raise HTTPException(
+            status_code=400,
+            detail="Така категорія вже існує"
+        )
     category_payload = Category(name=category.name)
     session.add(category_payload)
     session.commit()

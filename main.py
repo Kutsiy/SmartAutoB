@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from router import auth_router, user_router, mail_router, work_type_router, service_router, category_router, appointment_router
+from router import auth_router, user_router, mail_router, work_type_router, service_router, category_router, appointment_router, statistic_router
 from tools import create_db_and_tables
 
 app = FastAPI()
 
-origins = ["http://localhost:3000"]
+origins = ["http://localhost:3000", "http://localhost:3001"]
 
 @app.on_event("startup")
 def on_startup():
@@ -23,3 +23,4 @@ app.include_router(work_type_router)
 app.include_router(service_router)
 app.include_router(category_router)
 app.include_router(appointment_router)
+app.include_router(statistic_router)
