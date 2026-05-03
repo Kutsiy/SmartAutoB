@@ -5,8 +5,10 @@ from enum import Enum
 from datetime import datetime
 
 class AppointmentStatus(str, Enum):
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
     INPROCESSING = "INPROCESSING"
-    FINISHED = "FINISHED"
+    DONE = "DONE"
     CANCELED = "CANCELED"
 
 
@@ -22,16 +24,22 @@ class Appointment(SQLModel, table=True):
     user_id: UUID = Field(foreign_key='user.id', index=True, ondelete="CASCADE")
     user: "User" = Relationship(back_populates="appointments") 
     work_types: list["WorkType"] = Relationship(link_model=AppointmentWorkTypeLink)
+
     cost: Decimal = Field(default=0, max_digits=10, decimal_places=2)
+    
     status: AppointmentStatus = Field(
     default=AppointmentStatus.INPROCESSING,
     index=True
 )
     created_at: datetime = Field(default_factory=datetime.utcnow)
     appointment_time: datetime = Field(index=True)
+
     note: str | None = None
     cancel_reason: str | None = None
-    finish_note: str | None = None
-    updated_at: datetime | None = None
+    done_note: str | None = None
+
     canceled_at: datetime | None = None
-    finished_at: datetime | None = None
+    done_at: datetime | None = None
+
+    duration: int
+    startAt: datetime | None = None

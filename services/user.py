@@ -125,6 +125,10 @@ def change_user_name(new_name: str, session: SessionDep, user: User = Depends(ch
     session.refresh(user)
     return user
 
+def check_is_current_user_by_id(id: str, user: User = Depends(check_user)):
+    if id == user.id: return True
+    else: raise HTTPException(status_code=403)
+
 def delete_user_by_id(user_id: UUID, session: SessionDep):
     user = find_user_by_id(user_id, session)
     find_token_by_user_id_and_revoke(user_id, session)

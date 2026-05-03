@@ -5,6 +5,7 @@ from decimal import Decimal
 class CategoryResponse(SQLModel):
     id: UUID
     name: str
+    image_link: str
     services: list[ServiceResponse] = []
 
 class WorkTypeResponse(SQLModel):
@@ -14,8 +15,16 @@ class WorkTypeResponse(SQLModel):
     text: str
     price: Decimal
 
+class CategoryService(SQLModel):
+    id: UUID
+    name: str
+    image_link: str
+
 class ServiceResponse(SQLModel):
     id: UUID
     name: str
     text: str
+    link_name: str
+    category: CategoryService
+    image_link: str
     work_types: list[WorkTypeResponse] = []

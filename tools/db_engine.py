@@ -2,7 +2,8 @@ from sqlmodel import create_engine, SQLModel, Session, select
 from config import DATABASE_URL
 import time
 from sqlalchemy.exc import OperationalError
-import models 
+import models
+from models import Roles
 
 
 
@@ -24,12 +25,12 @@ def create_db_and_tables():
     #     existing_roles = session.exec(
     #         select(models.Role)
     #     ).all()
-    #     existing_names = {role.name for role in existing_roles}
+    #     existing_names = [role.name for role in existing_roles]
     #     roles_to_create = []
-    #     if "USER" not in existing_names:
-    #         roles_to_create.append(models.Role(name="USER"))
-    #     if "ADMIN" not in existing_names:
-    #         roles_to_create.append(models.Role(name="ADMIN"))
+    #     if Roles.USER not in existing_names:
+    #         roles_to_create.append(models.Role(name=Roles.USER))
+    #     if Roles.ADMIN not in existing_names:
+    #         roles_to_create.append(models.Role(name=Roles.ADMIN))
     #     if roles_to_create:
     #         session.add_all(roles_to_create)
     #         session.commit()

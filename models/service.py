@@ -5,8 +5,9 @@ from datetime import datetime
 
 class Service(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
-    name: str
+    name: str = Field(index=True, unique=True)
     link_name: str
+    image_link: str | None = None
     text: str
     category_id: UUID = Field(foreign_key='category.id', ondelete="CASCADE")
     category: Optional["Category"] = Relationship(back_populates="services")

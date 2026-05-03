@@ -3,7 +3,7 @@ from .user import (
     user_exist, Toggle, create_user, find_user_by_email,
     find_user_by_code_and_active, check_user_active, check_role,
     check_user_banned, delete_user_by_id, find_user_by_id,
-    find_all_users, check_user_auth, check_user_by_refresh_token, find_user_by_id_r_payload, update_user_name
+    find_all_users, check_user_auth, check_user_by_refresh_token, find_user_by_id_r_payload, update_user_name, check_is_current_user_by_id
 )
 
 from .role import find_and_add_role
@@ -18,7 +18,7 @@ from .mail import send_email, EmailSchema
 
 from .service import (
     find_all_services, find_service_by_id,
-    create_service, delete_service_by_id, update_service
+    create_service, delete_service_by_id, update_service,  find_service_by_category_id, find_services_by_search_string
 )
 
 from .work_type import (
@@ -28,15 +28,17 @@ from .work_type import (
 
 from .category import (
     find_all_categories, find_category_by_id, 
-    create_category, delete_category, update_category_by_id   
+    create_category, delete_category, update_category_by_id, search_category 
 )
+
+from .statistic import get_count_of_users
 
 __all__ = [
     # user
     "user_exist", "Toggle", "create_user", "find_user_by_email",
     "find_user_by_code_and_active", "check_user_active", "check_role",
     "check_user_banned", "delete_user_by_id", "find_user_by_id",
-    "find_all_users", "check_user_auth", "check_user_by_refresh_token", "find_user_by_id_r_payload", "update_user_name"
+    "find_all_users", "check_user_auth", "check_user_by_refresh_token", "find_user_by_id_r_payload", "update_user_name", "check_is_current_user_by_id"
 
     # role
     "find_and_add_role",
@@ -51,7 +53,7 @@ __all__ = [
 
     # service
     "find_all_services", "find_service_by_id",
-    "create_service", "delete_service_by_id", "update_service",
+    "create_service", "delete_service_by_id", "update_service", "find_services_by_search_string",
 
     # work_type
     "find_all_work_types", "find_work_type_by_id",
@@ -59,5 +61,8 @@ __all__ = [
 
     #category
     "find_all_categories", "find_category_by_id", 
-    "create_category", "delete_category", "update_category_by_id"   
+    "create_category", "delete_category", "update_category_by_id", "search_category", "find_service_by_category_id",
+
+    #statistic
+    "get_count_of_users"
 ]
