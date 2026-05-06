@@ -18,7 +18,7 @@ def get_user(id: UUID, session: SessionDep):
 @user_router.get("/my")
 def get_user( user: User = Depends(check_user_auth)):
 
-    return UserPayload(id=user.id, name=user.name, email=user.email, role=[role.name for role in user.roles], isActivate=user.isActive)
+    return UserPayload(id=user.id, name=user.name, email=user.email, role=[role.name for role in user.roles], isActivate=user.isActive, phoneNumber=user.phone_number)
 
 @user_router.patch("/update")
 def user_name_update(payload: UserUpdateNamePayload, session: SessionDep, check = Depends(check_user_auth)):

@@ -8,12 +8,18 @@ class CategoryResponse(SQLModel):
     image_link: str
     services: list[ServiceResponse] = []
 
+class WorkTypeService(SQLModel):
+    id: UUID
+    name: str
+
 class WorkTypeResponse(SQLModel):
     id: UUID
     name: str
     link_name: str
     text: str
     price: Decimal
+    duration: int
+    service: WorkTypeService
 
 class CategoryService(SQLModel):
     id: UUID

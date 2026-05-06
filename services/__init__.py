@@ -23,7 +23,7 @@ from .service import (
 
 from .work_type import (
     find_all_work_types, find_work_type_by_id,
-    add_work_type_to_service, delete_work_type, update_work_type
+    add_work_type_to_service, delete_work_type, update_work_type, work_type_search
 )
 
 from .category import (
@@ -57,7 +57,7 @@ __all__ = [
 
     # work_type
     "find_all_work_types", "find_work_type_by_id",
-    "add_work_type_to_service", "delete_work_type", "update_work_type",
+    "add_work_type_to_service", "delete_work_type", "update_work_type", "work_type_search",
 
     #category
     "find_all_categories", "find_category_by_id", 

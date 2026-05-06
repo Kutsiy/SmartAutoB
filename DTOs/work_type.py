@@ -5,3 +5,4 @@ class WorkTypeDto(BaseModel):
     name: str
     text: str
     price: Decimal
+    duration: int

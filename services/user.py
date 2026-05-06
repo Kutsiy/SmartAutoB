@@ -28,7 +28,7 @@ def user_exist(toggle: Toggle, user_payload: LoginDto | SignUpDto,  session: Ses
 
 def create_user(user_payload: SignUpDto, hashed_password, session: SessionDep):
     r_string: str = create_rundom_string()
-    user = User(name=user_payload.name, email=user_payload.email, password=hashed_password, activeSymbols=r_string)
+    user = User(name=user_payload.name, email=user_payload.email, password=hashed_password, activeSymbols=r_string, phone_number=user_payload.phone_number)
     session.add(user)
     session.commit()
     session.refresh(user)
