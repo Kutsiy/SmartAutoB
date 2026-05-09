@@ -9,7 +9,7 @@ from .user import (
 from .role import find_and_add_role
 
 from .token import (
-    create_and_safe_token, find_token_by_user_id_and_revoke,
+    create_and_save_token, find_token_by_user_id_and_revoke,
     get_access_token, find_all_user_tokens_by_id_and_delete,
     refresh_tokens, get_refresh_token
 )
@@ -33,6 +33,21 @@ from .category import (
 
 from .statistic import get_count_of_users
 
+from .consultation import (
+    get_all_consultations_service,
+    get_consultation_by_id_service,
+    create_consultation_service,
+    update_consultation_status_service,
+)
+
+from .appointment import (
+    get_all_appointments_service,
+    get_user_appointments_service,
+    get_appointment_by_id_service,
+    create_appointment_service,
+    update_appointment_status_service,
+)
+
 __all__ = [
     # user
     "user_exist", "Toggle", "create_user", "find_user_by_email",
@@ -44,7 +59,7 @@ __all__ = [
     "find_and_add_role",
 
     # token
-    "create_and_safe_token", "find_token_by_user_id_and_revoke",
+    "create_and_save_token", "find_token_by_user_id_and_revoke",
     "get_access_token", "find_all_user_tokens_by_id_and_delete",
     "refresh_tokens", "get_refresh_token"
 
@@ -64,5 +79,18 @@ __all__ = [
     "create_category", "delete_category", "update_category_by_id", "search_category", "find_service_by_category_id",
 
     #statistic
-    "get_count_of_users"
+    "get_count_of_users",
+
+    #consultation
+    "get_all_consultations_service",
+    "get_consultation_by_id_service",
+    "create_consultation_service",
+    "update_consultation_status_service",
+
+    #appointment
+    "get_all_appointments_service",
+    "get_user_appointments_service",
+    "get_appointment_by_id_service",
+    "create_appointment_service",
+    "update_appointment_status_service",
 ]

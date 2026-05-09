@@ -6,7 +6,7 @@ from uuid import UUID
 from sqlmodel import select
 from fastapi import HTTPException, status, Request
 
-def create_and_safe_token(user: User, role: list[Role], session: SessionDep):
+def create_and_save_token(user: User, role: list[Role], session: SessionDep):
     user_payload = UserPayload(email=user.email, name=user.name, role=[value.name for value in role])
     tokens: Tokens = create_tokens(user.id, user_payload=user_payload)
     expires_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
@@ -21,7 +21,7 @@ def refresh_tokens(user: User, role: list[Role], session: SessionDep):
     if not old_refresh_token or old_refresh_token.revoked:
         raise HTTPException(detail="Invalid refresh token", status_code=status.HTTP_406_NOT_ACCEPTABLE)
     old_refresh_token.revoked = True
-    return create_and_safe_token(user, role, session)
+    return create_and_save_token(user, role, session)
 
 def find_token_by_user_id_and_revoke(user_id: UUID, session: SessionDep):
     refresh_token = session.exec(select(RefreshToken).where(RefreshToken.user_id == user_id)).first()

@@ -9,8 +9,8 @@ def find_role(role: Roles, session: SessionDep):
         raise HTTPException(detail="Role not found", status_code=status.HTTP_404_NOT_FOUND)
     return role
 
-def find_and_add_role(user_id, session: SessionDep):
-    role: Role = find_role(Roles.USER, session)
+def find_and_add_role(user_id, session: SessionDep, default_role: Roles = Roles.USER):
+    role: Role = find_role(default_role, session)
     
     userRole = UserRole(user_id=user_id, role_id=role.id)
     session.add(userRole)
