@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from services import check_role, delete_user_by_id, find_all_users, find_user_by_id_r_payload, check_user_auth, update_user_name
+from services import check_role, delete_user_by_id, find_all_users, find_user_by_id_r_payload, check_user_auth, update_user_name, find_user_by_search
 from models import Roles, User
 from uuid import UUID
 from tools import SessionDep
@@ -31,3 +31,7 @@ def delete_user(id: UUID, session: SessionDep):
 @user_router.get('/isadmin')
 def user_is_admin(check = Depends(check_role([Roles.ADMIN]))):
     return True
+
+@user_router.get("/search")
+def search_user(session: SessionDep, search: str | None = None, active: bool | None = None):
+    return find_user_by_search(session=session, search=search, active=active)

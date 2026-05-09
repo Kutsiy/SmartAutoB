@@ -1,7 +1,6 @@
-from typing import Annotated
 from fastapi import APIRouter, Response, Request
 from sqlmodel import select
-from DTOs import LoginDto, SignUpDto, UserPayload
+from DTOs import LoginDto, SignUpDto, UserPayload, CreateAccountDto
 from tools import get_password_hash, ACCESS_TOKEN_EXPIRE_MINUTES, verify_password, REFRESH_TOKEN_EXPIRE_DAYS, Tokens
 from uuid import UUID, uuid4
 from tools import SessionDep, decode_access_token
@@ -48,6 +47,10 @@ async def signUp(sign_up: SignUpDto, session: SessionDep, response: Response)-> 
     set_cookie(response, tokens)    
 
     return UserPayload(email=user.email, name=user.name, role=[role.name], isActivate=user.isActive)
+
+@auth_router.post('/create')
+def create_account(create_account: CreateAccountDto, session: SessionDep):
+    user_exist(toggle=Toggle.EXIST, user_payload=create_account, session=session)
 
 @auth_router.get("/logout")
 def logout(response: Response, request: Request, session:SessionDep):

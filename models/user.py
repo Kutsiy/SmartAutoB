@@ -24,3 +24,5 @@ class User(SQLModel, table=True):
     sa_relationship_kwargs={"cascade": "all, delete-orphan"}
 )
     appointments: list["Appointment"] = Relationship(back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+
+    consultations: list["Consultation"] = Relationship(back_populates="user")

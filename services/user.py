@@ -1,6 +1,6 @@
 from enum import Enum
 from tools import SessionDep, create_rundom_string, decode_access_token, decode_refresh_token
-from DTOs import SignUpDto, LoginDto, UserPayload
+from DTOs import SignUpDto, LoginDto, UserPayload, CreateAccountDto
 from sqlmodel import select
 from models import User, Roles
 from fastapi import HTTPException, status, Depends
@@ -13,7 +13,7 @@ class Toggle(Enum):
     NOT_EXIST = 2
 
 
-def user_exist(toggle: Toggle, user_payload: LoginDto | SignUpDto,  session: SessionDep):
+def user_exist(toggle: Toggle, user_payload: LoginDto | SignUpDto | CreateAccountDto,  session: SessionDep):
     user = session.exec(select(User).where(User.email == user_payload.email)).first()
 
     if toggle == Toggle.EXIST:
@@ -134,3 +134,20 @@ def delete_user_by_id(user_id: UUID, session: SessionDep):
     find_token_by_user_id_and_revoke(user_id, session)
     session.delete(user)
     session.commit()
+
+def find_user_by_search(session: SessionDep, search: str | None = None, active: bool | None = None):
+    query = select(User)
+
+    if search:
+        query = query.where(User.name.ilike(f"%{search}%"))
+
+    if active == True:
+        query = query.where(User.isActive == active)
+    elif active == False:
+        query = query.where(User.isActive == active)
+    elif query == None:
+         pass
+
+        
+    users = session.exec(query).all()
+    return [UserPayload(id=user.id, name=user.name, email=user.email, role=[role.name for role in user.roles], isActivate=user.isActive) for user in users]

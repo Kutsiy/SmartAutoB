@@ -5,6 +5,8 @@ from .service import ServiceDto
 from .work_type import WorkTypeDto
 from .category import CategoryDto
 from .appointment import AppointmentDto
+from .create_account import CreateAccountDto
+from .consultation import CreateConsultationDto
 
-__all__ = ["LoginDto", "SignUpDto", "User", "UserPayload", "ServiceDto", "WorkTypeDto", "CategoryDto", "UserUpdateNamePayload", "AppointmentDto"]
+__all__ = ["LoginDto", "SignUpDto", "User", "UserPayload", "ServiceDto", "WorkTypeDto", "CategoryDto", "UserUpdateNamePayload", "AppointmentDto", "CreateAccountDto", "CreateConsultationDto"]
 
