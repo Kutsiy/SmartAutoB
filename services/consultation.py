@@ -87,17 +87,15 @@ def update_consultation_status_service(
 
     consultation.status = status
 
-    if status != ConsultationStatus.CANCELED:
-        consultation.canceled_at = None
-
-    if status != ConsultationStatus.DONE:
-        consultation.done_at = None
-
     if status == ConsultationStatus.CANCELED:
         consultation.canceled_at = datetime.utcnow()
+    else:
+         consultation.canceled_at = None
 
     if status == ConsultationStatus.DONE:
         consultation.done_at = datetime.utcnow()
+    else: 
+        consultation.done_at = None
 
     session.add(consultation)
     session.commit()

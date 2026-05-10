@@ -73,7 +73,7 @@ def logout(response: Response, request: Request, session:SessionDep):
 def refresh(response: Response, session: SessionDep, user: User = Depends(check_user_by_refresh_token)):
     tokens = refresh_tokens(user, user.roles, session)
     set_cookie(response, tokens)    
-    return UserPayload(email=user.email, name=user.name, role=[value.name for value in user.roles], isActivate=user.isActive)
+    return UserPayload(id=user.id, email=user.email, name=user.name, role=[value.name for value in user.roles], isActivate=user.isActive)
 
 @auth_router.get("/check")
 async def check(check = Depends(check_user_auth)):

@@ -52,3 +52,8 @@ def work_type_search(session: SessionDep, search: str | None = None, service: st
         query = query.join(WorkType.service).where(Service.name == service)
 
     return session.exec(query).all()
+
+def find_work_type_by_link(link: str, session: SessionDep):
+    link_name = link.lower().strip().replace(" ", "/")
+    work_type = session.exec(select(WorkType).where(WorkType.link_name == link_name)).first()
+    return work_type

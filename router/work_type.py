@@ -5,7 +5,7 @@ from uuid import UUID
 from tools import SessionDep
 from DTOs import WorkTypeDto
 from response import WorkTypeResponse
-from services import find_all_work_types, find_work_type_by_id, add_work_type_to_service, update_work_type, delete_work_type, work_type_search
+from services import find_all_work_types, find_work_type_by_id, add_work_type_to_service, update_work_type, delete_work_type, work_type_search, find_work_type_by_link
 
 work_type_router = APIRouter(prefix="/work/type")
 
@@ -16,6 +16,11 @@ def get_all_work_types(session: SessionDep, id: UUID | None = None):
 @work_type_router.get("")
 def get_work_type_by_id(id: UUID, session: SessionDep):
     return find_work_type_by_id(id, session)
+
+@work_type_router.get("/link", response_model=WorkTypeResponse)
+def get_work_type_by_link(link: str, session: SessionDep):
+    return find_work_type_by_link(link=link, session=session)
+
 
 @work_type_router.get("/search")
 def search_work_type(session: SessionDep, search: str | None = None, service: str | None = None):

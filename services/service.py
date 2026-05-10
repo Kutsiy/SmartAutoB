@@ -67,3 +67,9 @@ def find_services_by_search_string(session: SessionDep, category: str | None = N
 
     print(category)
     return session.exec(query).all()
+
+def find_service_by_link(link: str, session: SessionDep):
+    link_name = link.lower().strip().replace(" ", "/")
+    print(link)
+    service = session.exec(select(Service).where(Service.link_name == link_name)).first()
+    return service

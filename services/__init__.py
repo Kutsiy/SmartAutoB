@@ -18,12 +18,12 @@ from .mail import send_email, EmailSchema
 
 from .service import (
     find_all_services, find_service_by_id,
-    create_service, delete_service_by_id, update_service,  find_service_by_category_id, find_services_by_search_string
+    create_service, delete_service_by_id, update_service,  find_service_by_category_id, find_services_by_search_string, find_service_by_link
 )
 
 from .work_type import (
     find_all_work_types, find_work_type_by_id,
-    add_work_type_to_service, delete_work_type, update_work_type, work_type_search
+    add_work_type_to_service, delete_work_type, update_work_type, work_type_search, find_work_type_by_link
 )
 
 from .category import (
@@ -46,6 +46,7 @@ from .appointment import (
     get_appointment_by_id_service,
     create_appointment_service,
     update_appointment_status_service,
+    get_date_for_appointment_service
 )
 
 __all__ = [
@@ -68,11 +69,11 @@ __all__ = [
 
     # service
     "find_all_services", "find_service_by_id",
-    "create_service", "delete_service_by_id", "update_service", "find_services_by_search_string",
+    "create_service", "delete_service_by_id", "update_service", "find_services_by_search_string", "find_service_by_link",
 
     # work_type
     "find_all_work_types", "find_work_type_by_id",
-    "add_work_type_to_service", "delete_work_type", "update_work_type", "work_type_search",
+    "add_work_type_to_service", "delete_work_type", "update_work_type", "work_type_search", "find_work_type_by_link",
 
     #category
     "find_all_categories", "find_category_by_id", 
@@ -93,4 +94,5 @@ __all__ = [
     "get_appointment_by_id_service",
     "create_appointment_service",
     "update_appointment_status_service",
+    "get_date_for_appointment_service"
 ]

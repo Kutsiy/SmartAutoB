@@ -1,6 +1,6 @@
 from uuid import UUID
-from DTOs import AppointmentDto
-from models import AppointmentStatus, Appointment, WorkType
+from DTOs import AppointmentDto, AppointmentDateDto
+from models import AppointmentStatus, Appointment, WorkType, User
 from tools import SessionDep
 from sqlmodel import select, or_, col
 from fastapi import HTTPException
@@ -18,11 +18,11 @@ def get_all_appointments_service(
     if search and search.strip():
         search_like = f"%{search.strip()}%"
 
-        query = query.join(Appointment.user).where(
+        query = query.join(User).where(
             or_(
                 col(Appointment.note).ilike(search_like),
-                col(Appointment.user.name).ilike(search_like),
-                col(Appointment.user.email).ilike(search_like),
+                col(User.name).ilike(search_like),
+                col(User.email).ilike(search_like),
             )
         )
 
@@ -47,7 +47,6 @@ def get_user_appointments_service(
     query = (
         select(Appointment)
         .where(Appointment.user_id == id)
-        .order_by(Appointment.created_at.desc())
     )
 
     appointments = session.exec(query).all()
@@ -89,16 +88,19 @@ def create_appointment_service(
         )
 
     total_cost = sum((work_type.price for work_type in work_types), Decimal("0"))
-    total_duration = sum((work_type.time for work_type in work_types), 0)
+    total_duration = sum((work_type.duration for work_type in work_types), 0)
 
     new_appointment = Appointment(
         user_id=appointment.user_id,
         note=appointment.note,
         appointment_time=appointment.appointment_time,
+        appointment_date=appointment.appointment_date,
         work_types=work_types,
         cost=total_cost,
         duration=total_duration,
     )
+
+
 
     session.add(new_appointment)
     session.commit()
@@ -125,12 +127,46 @@ def update_appointment_status_service(
 
     if status == AppointmentStatus.CANCELED:
         appointment.canceled_at = datetime.utcnow()
+    else:
+        appointment.canceled_at = None
 
     if status == AppointmentStatus.DONE:
         appointment.done_at = datetime.utcnow()
+    else:
+        appointment.done_at = None
 
     session.add(appointment)
     session.commit()
     session.refresh(appointment)
 
     return appointment
+
+
+def get_date_for_appointment_service(session: SessionDep, appointment_date: AppointmentDateDto):
+    work_hours = [10, 11, 12, 13, 14, 15, 16, 17, 18]
+
+    appointments = session.exec(
+        select(Appointment).where(
+            Appointment.appointment_date == appointment_date.appointment_date,
+            col(Appointment.status).in_([
+                AppointmentStatus.INPROCESSING,
+                AppointmentStatus.CONFIRMED,
+            ]),
+        )
+    ).all()
+
+    busy_hours = {
+        appointment.appointment_time.hour
+        for appointment in appointments
+    }
+
+
+
+    available_hours = [
+        f"{hour}:00"
+        for hour in work_hours
+        if hour not in busy_hours
+    ]
+
+    return available_hours
+

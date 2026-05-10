@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form
 from uuid import UUID
 from tools import SessionDep
 from DTOs import ServiceDto
-from services import find_all_services, find_service_by_id, create_service, update_service, delete_service_by_id, find_service_by_category_id, find_services_by_search_string
+from services import find_all_services, find_service_by_id, create_service, update_service, delete_service_by_id, find_service_by_category_id, find_services_by_search_string, find_service_by_link
 from response import ServiceResponse
 
 service_router = APIRouter(prefix="/service")
@@ -14,6 +14,11 @@ def get_all_service(session: SessionDep):
 @service_router.get('')
 def get_service_by_id(id: UUID, session: SessionDep):
     return find_service_by_id(id, session)
+
+@service_router.get('/link', response_model=ServiceResponse)
+def get_service_by_link(link: str, session: SessionDep):
+    return find_service_by_link(link=link, session=session)
+
 
 @service_router.get('/category')
 def get_service_by_id(id: UUID, session: SessionDep):
