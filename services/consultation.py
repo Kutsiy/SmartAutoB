@@ -59,7 +59,6 @@ def create_consultation_service(
     id: UUID | None = None
 ):
     
-    print(id)
     new_consultation = Consultation(
         name=consultation.name,
         phone_number=consultation.phone_number,
@@ -73,6 +72,16 @@ def create_consultation_service(
     session.refresh(new_consultation)
 
     return new_consultation
+
+def consultation_by_user_service(id: UUID, session: SessionDep, search: str | None = None):
+    query = select(Consultation).where(Consultation.userId == id)
+
+    if search:
+        ilike_search = f"%{search}%"
+
+        query = query.where(or_(col(Consultation.name).ilike(ilike_search), col(Consultation.phone_number).ilike(ilike_search), col(Consultation.note).ilike(ilike_search)))
+
+    return session.exec(query).all()
 
 
 def update_consultation_status_service(

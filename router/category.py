@@ -23,12 +23,10 @@ def find_category_by_search_string(search: str, session: SessionDep):
 @category_router.patch("/update")
 async def update(id: UUID, session: SessionDep, file: UploadFile | None = File(default=None), name: str = Form()):
     category = CategoryDto(name=name)
-    print(id)
     return await update_category_by_id(id=id, category=category, file=file, session=session)
 
 @category_router.post("/create")
 async def create(session: SessionDep, file: UploadFile = File(), name: str = Form()):
-    print(file)
     category = CategoryDto(name=name)
     return await create_category(category=category, file=file, session=session)
 

@@ -1,10 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from tools import SessionDep
 from models import ConsultationStatus
 from uuid import UUID
 from DTOs import CreateConsultationDto
 from typing import Literal
-from services import get_all_consultations_service, get_consultation_by_id_service, create_consultation_service, update_consultation_status_service
+from services import get_all_consultations_service, get_consultation_by_id_service, create_consultation_service, update_consultation_status_service, consultation_by_user_service, check_is_current_user_by_id
 
 consultation_router = APIRouter(prefix='/consultation')
 
@@ -21,6 +21,10 @@ def get_all_consultations(session: SessionDep, search: str | None = None, status
 @consultation_router.get('')
 def get_consultation_by_id(id: UUID, session: SessionDep):
     return get_consultation_by_id_service(id=id, session=session)
+
+@consultation_router.get('/user')
+def get_consultation_by_user(id: UUID, session: SessionDep, check = Depends(check_is_current_user_by_id), search: str | None = None):
+    return consultation_by_user_service(id=id, session=session, search=search)
 
 @consultation_router.post('/create')
 def create_consultation(consultation: CreateConsultationDto, session: SessionDep, id: UUID | None = None):

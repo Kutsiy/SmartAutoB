@@ -16,8 +16,6 @@ def check_service_by_name(name: str, session: SessionDep):
 
 def find_all_services(session: SessionDep):
     services = session.exec(select(Service).options(selectinload(Service.work_types))).all()
-    for s in services:
-        print(s.work_types)
     return services
 
 def find_service_by_id(id: UUID, session: SessionDep):
@@ -65,11 +63,9 @@ def find_services_by_search_string(session: SessionDep, category: str | None = N
     if category:
         query = query.join(Service.category).where(Category.name == category)
 
-    print(category)
     return session.exec(query).all()
 
 def find_service_by_link(link: str, session: SessionDep):
     link_name = link.lower().strip().replace(" ", "/")
-    print(link)
     service = session.exec(select(Service).where(Service.link_name == link_name)).first()
     return service

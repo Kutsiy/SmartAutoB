@@ -28,7 +28,6 @@ def search_work_type(session: SessionDep, search: str | None = None, service: st
 
 @work_type_router.post("/add")
 def add_work_type(id: UUID, type_payload: WorkTypeDto, session: SessionDep):
-    print(id)
     return add_work_type_to_service(id=id, work_type=type_payload, session=session)
 
 @work_type_router.patch("/update")

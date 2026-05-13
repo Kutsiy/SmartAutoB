@@ -69,7 +69,6 @@ def find_user_by_email(email: str, session: SessionDep):
 
     
 def find_user_by_code_and_active(code:str, session: SessionDep):
-    print(code)
     user = session.exec(select(User).where(User.activeSymbols == code)).first()
     if not user:
         raise HTTPException(detail="User with this code not exist", status_code=status.HTTP_404_NOT_FOUND)
@@ -125,9 +124,9 @@ def change_user_name(new_name: str, session: SessionDep, user: User = Depends(ch
     session.refresh(user)
     return user
 
-def check_is_current_user_by_id(id: str, user: User = Depends(check_user)):
+def check_is_current_user_by_id(id: UUID, user: User = Depends(check_user)):
     if id == user.id: return True
-    else: raise HTTPException(status_code=403)
+    else: raise HTTPException(status_code=403, detail="Цей користувач не має доступу до цього матеріалу.")
 
 def delete_user_by_id(user_id: UUID, session: SessionDep):
     user = find_user_by_id(user_id, session)

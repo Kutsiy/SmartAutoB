@@ -31,13 +31,14 @@ from .category import (
     create_category, delete_category, update_category_by_id, search_category 
 )
 
-from .statistic import get_count_of_users
+from .statistic import get_count_of_users, get_active_appointments, appointments_by_day_service, done_appointments_by_months_service, consultation_by_day_service, done_and_canceled_appointments_service
 
 from .consultation import (
     get_all_consultations_service,
     get_consultation_by_id_service,
     create_consultation_service,
     update_consultation_status_service,
+    consultation_by_user_service
 )
 
 from .appointment import (
@@ -80,13 +81,14 @@ __all__ = [
     "create_category", "delete_category", "update_category_by_id", "search_category", "find_service_by_category_id",
 
     #statistic
-    "get_count_of_users",
+    "get_count_of_users", "get_active_appointments", "appointments_by_day_service", "done_appointments_by_months_service", "consultation_by_day_service", "done_and_canceled_appointments_service",
 
     #consultation
     "get_all_consultations_service",
     "get_consultation_by_id_service",
     "create_consultation_service",
     "update_consultation_status_service",
+    "consultation_by_user_service",
 
     #appointment
     "get_all_appointments_service",
