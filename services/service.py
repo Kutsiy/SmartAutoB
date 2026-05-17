@@ -29,7 +29,7 @@ def find_service_by_category_id(id: UUID, session: SessionDep):
 async def create_service(id: UUID, service: ServiceDto, session: SessionDep, file: UploadFile):
     check_service_by_name(name=service.name, session=session)
     category = find_category_by_id(id, session)
-    link_name = service.name.lower().strip().replace(" ", "/")
+    link_name = service.name.lower().strip().replace(" ", "-")
     file_link = await save_file(file=file, prefix='service')
     service_payload = Service(name=service.name, link_name=link_name, category=category, text=service.text, image_link=file_link)
     session.add(service_payload)
@@ -66,6 +66,6 @@ def find_services_by_search_string(session: SessionDep, category: str | None = N
     return session.exec(query).all()
 
 def find_service_by_link(link: str, session: SessionDep):
-    link_name = link.lower().strip().replace(" ", "/")
+    link_name = link.lower().strip().replace(" ", "-")
     service = session.exec(select(Service).where(Service.link_name == link_name)).first()
     return service

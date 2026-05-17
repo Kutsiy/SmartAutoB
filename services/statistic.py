@@ -1,4 +1,4 @@
-from models import User, Appointment, AppointmentStatus
+from models import User, Appointment, AppointmentStatus, Consultation
 from tools import SessionDep
 from sqlmodel import select, or_
 from datetime import datetime, timedelta
@@ -20,14 +20,13 @@ def done_appointments_by_months_service(session: SessionDep):
 
     done_by_month = {}
 
+    done_by_month[datetime.now().strftime("%B")] = 0
+
 
     for value in done_appoitments:
         if value.done_at and value.status == AppointmentStatus.DONE:
             month = value.done_at.strftime("%B")
             done_by_month[month] = done_by_month.get(month, 0) + 1
-        else:
-             month = value.created_at.strftime("%B")
-             done_by_month[month] = 0
 
     result = [
             {
@@ -46,13 +45,11 @@ def appointments_by_day_service(session: SessionDep):
 
     appointments_days = {}
 
+    appointments_days[datetime.now().strftime("%A")] = 0
+
     for appointment in appointments:
         day = appointment.created_at.strftime("%A")
-
-        if day in appointments_days:
-            appointments_days[day] += 1
-        else:
-            appointments_days[day] = 0
+        appointments_days[day] += 1
 
     result = [
         {
@@ -69,17 +66,15 @@ def appointments_by_day_service(session: SessionDep):
 def consultation_by_day_service(session: SessionDep):
     seven_days_ago = datetime.utcnow() - timedelta(days=7)
 
-    consultations = session.exec(select(Appointment).where(Appointment.created_at >= seven_days_ago)).all()
+    consultations = session.exec(select(Consultation).where(Consultation.created_at >= seven_days_ago)).all()
 
     consultations_days = {}
 
+    consultations_days[datetime.now().strftime("%A")] = 0
+
     for consultation in consultations:
         day = consultation.created_at.strftime("%A")
-
-        if day in consultations_days:
-            consultations_days[day] += 1
-        else:
-            consultations_days[day] = 0
+        consultations_days[day] += 1
 
     result = [
         {

@@ -5,17 +5,17 @@ from uuid import UUID
 from tools import SessionDep
 from DTOs import UserPayload, UserUpdateNamePayload
 
-user_router = APIRouter(prefix="/user", dependencies=[Depends(check_role([Roles.USER]))])
+user_router = APIRouter(prefix="/user")
 
-@user_router.get("/all")
+@user_router.get("/all", dependencies=[Depends(check_role([Roles.ADMIN]))])
 def get_all_users(session: SessionDep):
     return find_all_users(session)
 
-@user_router.get("")
+@user_router.get("", dependencies=[Depends(check_role([Roles.ADMIN]))])
 def get_user(id: UUID, session: SessionDep):
     return find_user_by_id_r_payload(id, session)
 
-@user_router.get("/my")
+@user_router.get("/my", dependencies=[Depends(check_role([Roles.USER, Roles.ADMIN]))])
 def get_user( user: User = Depends(check_user_auth)):
 
     return UserPayload(id=user.id, name=user.name, email=user.email, role=[role.name for role in user.roles], isActivate=user.isActive, phoneNumber=user.phone_number)

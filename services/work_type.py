@@ -30,7 +30,7 @@ def update_work_type(id: UUID, work_type: WorkTypeDto, session: SessionDep):
 
 def add_work_type_to_service(id: UUID, work_type: WorkTypeDto, session: SessionDep):
     service = find_service_by_id(id, session)
-    link_name = work_type.name.lower().strip().replace(" ", "/")
+    link_name = work_type.name.lower().strip().replace(" ", "-")
     work_type_payload = WorkType(name=work_type.name, link_name=link_name, text=work_type.text, price=work_type.price, service=service, duration=work_type.duration)
     session.add(work_type_payload)
     session.commit()
@@ -54,6 +54,6 @@ def work_type_search(session: SessionDep, search: str | None = None, service: st
     return session.exec(query).all()
 
 def find_work_type_by_link(link: str, session: SessionDep):
-    link_name = link.lower().strip().replace(" ", "/")
+    link_name = link.lower().strip().replace(" ", "-")
     work_type = session.exec(select(WorkType).where(WorkType.link_name == link_name)).first()
     return work_type

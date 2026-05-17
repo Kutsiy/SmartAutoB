@@ -96,10 +96,14 @@ def check_user_active(session: SessionDep, user: User = Depends(check_user)):
     if not user.isActive:
         raise HTTPException(detail="User account not activated", status_code=status.HTTP_406_NOT_ACCEPTABLE)
     return user
-    
+
+def check_roles_by_user(session: SessionDep, user: User = Depends(check_user)):
+    return session.exec(select(User).where(User.email == user.email).join(User.roles)).first()
+
 def check_role(roles: list[Roles]):
-    def check(user: User = Depends(check_user)):
+    def check(user: User = Depends(check_roles_by_user)):
         if not any(r.name in roles for r in user.roles):
+            
             raise HTTPException(detail="You don`t have perrmision", status_code=status.HTTP_406_NOT_ACCEPTABLE)
     return check
 
